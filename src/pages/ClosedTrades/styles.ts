@@ -1,8 +1,5 @@
 import styled from 'styled-components';
-
-interface CardProps {
-  wallet?: boolean;
-}
+import { shade } from 'polished';
 
 export const Container = styled.div`
   width: 100%;
@@ -11,77 +8,7 @@ export const Container = styled.div`
   padding: 40px 20px;
 `;
 
-export const Title = styled.h1`
-  font-size: 48px;
-  color: #3a3a3a;
-`;
-
-export const CardContainer = styled.section`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 32px;
-  margin-top: -150px;
-`;
-
-export const AddCard = styled.div`
-  background: ${({ wallet }: CardProps): string =>
-    wallet ? '#FF872C' : '#fff'};
-  padding: 22px 32px;
-  border-radius: 5px;
-  color: ${({ wallet }: CardProps): string => (wallet ? '#fff' : '#363F5F')};
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s;
-
-  p {
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 14px;
-  }
-
-  :hover {
-    transform: translateX(-10px);
-
-    svg {
-      opacity: 0.7;
-    }
-
-    p {
-      opacity: 0.7;
-    }
-  }
-`;
-
-export const Card = styled.div`
-  background: ${({ wallet }: CardProps): string =>
-    wallet ? '#FF872C' : '#fff'};
-  padding: 17px 32px;
-  border-radius: 5px;
-  color: ${({ wallet }: CardProps): string => (wallet ? '#fff' : '#363F5F')};
-
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    p {
-      font-size: 16px;
-    }
-  }
-
-  h1 {
-    margin-top: 14px;
-    font-size: 26px;
-    font-weight: normal;
-    line-height: 54px;
-  }
-`;
-
 export const TableContainer = styled.section`
-  margin-top: 32px;
-
   h1 {
     text-align: center;
     font-size: 24px;

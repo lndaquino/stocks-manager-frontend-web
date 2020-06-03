@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { shade } from 'polished';
 
 interface CardProps {
   wallet?: boolean;
@@ -20,7 +21,7 @@ export const CardContainer = styled.section`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 32px;
-  margin-top: -150px;
+  margin-top: -20px;
 `;
 
 export const AddCard = styled.div`
@@ -80,8 +81,7 @@ export const Card = styled.div`
 `;
 
 export const TableContainer = styled.section`
-  margin-top: 32px;
-
+  margin-top: 10px;
   h1 {
     text-align: center;
     font-size: 24px;
@@ -120,9 +120,10 @@ export const TableContainer = styled.section`
       color: #969cb3;
       text-align: center;
 
-      a {
-        text-decoration: none;
+      button {
         color: #550498;
+        border: 0;
+        background: #fff;
         transition: opacity 0.2s;
 
         &:hover {

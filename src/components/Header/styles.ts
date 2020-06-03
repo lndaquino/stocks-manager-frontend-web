@@ -5,7 +5,7 @@ interface ContainerProps {
 }
 
 export const Container = styled.div<ContainerProps>`
-  background: #5636d3;
+  background: #048998;
   padding: 30px 0;
 
   header {
@@ -15,20 +15,52 @@ export const Container = styled.div<ContainerProps>`
     display: flex;
     align-items: center;
     justify-content: space-between;
+    font-family: 'Montserrat', sans-serif;
+
+    div {
+      display: flex;
+      align-items: center;
+      color: #fff;
+
+      h1 {
+        font-size: 48px;
+        font-weight: 900;
+        margin-right: 12px;
+      }
+
+      span {
+        font-size: 32px;
+        font-weight: 500;
+      }
+    }
 
     nav {
+      display: flex;
+      align-items: center;
+      font-weight: 500;
+
+      button {
+        background: none;
+        border: 0;
+        color: #fff;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+      }
+
       a {
         color: #fff;
         text-decoration: none;
         font-size: 16px;
         transition: opacity 0.2s;
+        padding: 0 0 10px 0;
 
         & + a {
-          margin-left: 32px;
+          margin-left: 36px;
         }
 
         &:hover {
-          opacity: 0.6;
+          opacity: 0.7;
         }
       }
     }

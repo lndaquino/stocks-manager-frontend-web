@@ -150,7 +150,7 @@ export const TableContainer = styled.section`
     }
 
     td {
-      padding: 20px 32px;
+      padding: 20px 16px;
       border: 0;
       background: #fff;
       font-size: 16px;

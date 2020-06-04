@@ -94,7 +94,7 @@ export const TableContainer = styled.section`
     th {
       color: #969cb3;
       font-weight: normal;
-      padding: 2px 32px;
+      padding: 2px 16px;
       text-align: left;
       font-size: 16px;
       line-height: 24px;
@@ -112,7 +112,7 @@ export const TableContainer = styled.section`
     }
 
     td {
-      padding: 20px 32px;
+      padding: 20px 16px;
       border: 0;
       background: #fff;
       font-size: 16px;

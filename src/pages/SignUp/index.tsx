@@ -70,7 +70,6 @@ const SignUp: React.FC = () => {
 
           return;
         }
-        console.log(err.response.status);
 
         addToast({
           type: 'error',

@@ -68,7 +68,6 @@ const Dashboard: React.FC = () => {
             Authorization: parsedToken,
           },
         });
-        console.log(getActiveTrades);
         setHasActiveTrades(true);
         setActiveTrades(getActiveTrades.data.balance);
         setWallet(getActiveTrades.data.wallet.wallet);

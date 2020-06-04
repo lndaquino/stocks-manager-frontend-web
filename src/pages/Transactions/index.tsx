@@ -1,4 +1,10 @@
-import React, { useState, useEffect, FormEvent, useCallback } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  FormEvent,
+  useCallback,
+} from 'react';
 import { Link } from 'react-router-dom';
 
 import { useToast } from '../../hooks/toast';
@@ -133,14 +139,6 @@ const Transactions: React.FC = () => {
   const handleSubmit = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      console.log({
-        ticker,
-        transactionType,
-        transactionDate,
-        tickerQuantity,
-        tickerValue,
-        transactionCost,
-      });
 
       let validatedForm = true;
 
@@ -203,16 +201,6 @@ const Transactions: React.FC = () => {
       // submete formulário
       const choosedAsset = assets.find(asset => asset.ticker === ticker);
       try {
-        console.log(choosedAsset);
-        console.log({
-          tickerQuantity,
-          tickerValue,
-          transactionCost,
-          transactionType,
-          transactionDate,
-        });
-
-        console.log(parsedToken);
         await api.post(
           '/transactions/add',
           {
@@ -229,6 +217,10 @@ const Transactions: React.FC = () => {
             },
           },
         );
+
+        setTickerQuantity(0);
+        setTickerValue(0);
+        setTransactionCost(0);
 
         addToast({
           type: 'sucess',
@@ -284,7 +276,6 @@ const Transactions: React.FC = () => {
 
   const handleDelete = useCallback(
     async (id: string) => {
-      console.log('handleDelete', { id });
       try {
         await api.delete(`/transactions/delete/${id}`, {
           headers: {
@@ -323,6 +314,19 @@ const Transactions: React.FC = () => {
     },
     [addToast, parsedToken],
   );
+
+  const totalValue = useMemo(() => {
+    const tempCost =
+      (transactionType === 'buy' ? transactionCost : -transactionCost) / 100;
+
+    return ((tickerQuantity * tickerValue) / 100 + tempCost).toLocaleString(
+      'pt-BR',
+      {
+        style: 'currency',
+        currency: 'BRL',
+      },
+    );
+  }, [tickerQuantity, tickerValue, transactionCost, transactionType]);
 
   return (
     <>
@@ -436,12 +440,7 @@ const Transactions: React.FC = () => {
           </TickerRegisterContainer>
           <TotalInfosContainer>
             <h2>Valor total</h2>
-            <p>
-              {((tickerQuantity * tickerValue) / 100).toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL',
-              })}
-            </p>
+            <p>{totalValue}</p>
           </TotalInfosContainer>
         </RegisterContainer>
 
@@ -461,6 +460,7 @@ const Transactions: React.FC = () => {
                   <th>Operação</th>
                   <th>Quantidade</th>
                   <th>Valor</th>
+                  <th>Custo</th>
                   <th>Valor Total</th>
                   <th />
                 </tr>
@@ -478,6 +478,7 @@ const Transactions: React.FC = () => {
                       {Intl.NumberFormat().format(item.quantity)}
                     </td>
                     <td className="ticker">{formatValue(item.value)}</td>
+                    <td className="loss">{formatValue(item.cost)}</td>
                     <td className={item.type === 'buy' ? 'profit' : 'loss'}>
                       {item.type === 'buy'
                         ? formatValue(item.total_value)

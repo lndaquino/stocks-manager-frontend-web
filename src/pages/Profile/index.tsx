@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { FiMail, FiKey, FiLock, FiUser } from 'react-icons/fi';
 
@@ -13,8 +13,7 @@ import Header from '../../components/Header';
 import Input from '../../components/IconedInput';
 
 import { Container, Content, Button } from './styles';
-
-import alert from '../../assets/alert.svg';
+import { useAuth } from '../../hooks/auth';
 import api from '../../services/api';
 
 interface ProfileFormData {
@@ -27,57 +26,104 @@ interface ProfileFormData {
 
 const Import: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
+  const { user, updateUser } = useAuth();
+  const token = localStorage.getItem('@StocksLife:token');
+  const parsedToken = `Bearer ${token}`;
+  const history = useHistory();
 
   const { addToast } = useToast();
 
-  const handleSubmit = useCallback(async (data: ProfileFormData) => {
-    console.log(data);
+  const handleSubmit = useCallback(
+    async (data: ProfileFormData) => {
+      try {
+        formRef.current?.setErrors({});
+        let schema;
 
-    try {
-      formRef.current?.setErrors({});
+        if (!data.newPassword) {
+          schema = Yup.object().shape({
+            name: Yup.string().required('Nome obrigatório'),
+            email: Yup.string()
+              .required('Email obrigatório')
+              .email('Digite um email válido'),
+            newPassword: Yup.string(),
+            confirmNewPassword: Yup.string(),
+            password: Yup.string().required('Senha obrigatória'),
+          });
+        } else {
+          schema = Yup.object().shape({
+            name: Yup.string().required('Nome obrigatório'),
+            email: Yup.string()
+              .required('Email obrigatório')
+              .email('Digite um email válido'),
 
-      const schema = Yup.object().shape({
-        name: Yup.string().required('Nome obrigatório'),
-        email: Yup.string()
-          .required('Email obrigatório')
-          .email('Digite um email válido'),
-        newPassword: Yup.string().oneOf(
-          [Yup.ref('confirmNewPassword'), null],
-          'Nova senha deve ser igual ao campo de confirmação',
-        ),
-        confirmNewPassword: Yup.string().oneOf(
-          [Yup.ref('newPassword'), null],
-          'Confirmação de senha deve ser igual ao campo nova senha',
-        ),
-        password: Yup.string().required('Senha obrigatória'),
-      });
+            newPassword: Yup.string().min(6, 'Minimo de 6 caracteres'),
 
-      await schema.validate(data, { abortEarly: false });
+            confirmNewPassword: Yup.string()
+              .min(6, 'Minimo de 6 caracteres')
+              .oneOf(
+                [Yup.ref('newPassword'), null],
+                'Confirmação de senha deve ser igual ao campo nova senha',
+              ),
+            password: Yup.string().required('Senha obrigatória'),
+          });
+        }
 
-      /* await signIn({ email: data.email, password: data.password }); */
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const errors = getValidationErrors(err);
+        await schema.validate(data, { abortEarly: false });
 
-        formRef.current?.setErrors(errors);
+        const { name, email, password, newPassword } = data;
 
-        return;
+        const formData = {
+          name,
+          email,
+          password,
+          ...(newPassword ? { new_password: newPassword } : {}),
+        };
+
+        console.log(formData);
+        const response = await api.put('/users/update', formData, {
+          headers: {
+            Authorization: parsedToken,
+          },
+        });
+
+        updateUser(response.data);
+
+        history.push('/dashboard');
+
+        addToast({
+          type: 'sucess',
+          title: 'Perfil atualizado com sucesso',
+        });
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
+
+          formRef.current?.setErrors(errors);
+
+          return;
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro na autenticação',
+          description:
+            'Ocorreu um erro ao atualizar os dados, cheque as credenciais.',
+        });
       }
-
-      addToast({
-        type: 'error',
-        title: 'Erro na autenticação',
-        description: 'Ocorreu um erro ao fazer login, cheque as credenciais.',
-      });
-    }
-  }, []);
+    },
+    [addToast, parsedToken, history, updateUser],
+  );
 
   return (
     <>
       <Header size="small" />
       <Container>
         <Content>
-          <Form ref={formRef} onSubmit={handleSubmit}>
+          <Form
+            ref={formRef}
+            initialData={{ name: user.name, email: user.email }}
+            onSubmit={handleSubmit}
+          >
             <h1>Atualize seus dados</h1>
 
             <Input name="name" icon={FiUser} placeholder="Nome" />
@@ -85,6 +131,7 @@ const Import: React.FC = () => {
             <Input name="email" icon={FiMail} placeholder="E-mail" />
 
             <Input
+              containerStyle={{ marginTop: 18 }}
               name="newPassword"
               icon={FiLock}
               type="password"
@@ -99,10 +146,11 @@ const Import: React.FC = () => {
             />
 
             <Input
+              containerStyle={{ marginTop: 18 }}
               name="password"
               icon={FiKey}
               type="password"
-              placeholder="Digite sua senha atual"
+              placeholder="Obrigatório - senha atual"
             />
 
             <Button type="submit">Confirmar alterações</Button>

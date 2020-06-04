@@ -128,9 +128,7 @@ const Import: React.FC = () => {
         },
         {
           label: 'Cancelar',
-          onClick: () => {
-            console.log('Abort');
-          },
+          onClick: () => {},
         },
       ],
     });

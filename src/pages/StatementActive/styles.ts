@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { shade } from 'polished';
 
 interface CardProps {
   wallet?: boolean;
@@ -78,10 +77,15 @@ export const Card = styled.div`
     font-weight: normal;
     line-height: 54px;
   }
+
+  h2 {
+    font-weight: normal;
+  }
 `;
 
 export const TableContainer = styled.section`
   margin-top: 10px;
+
   h1 {
     text-align: center;
     font-size: 24px;

@@ -1,10 +1,4 @@
-import React, {
-  InputHTMLAttributes,
-  useEffect,
-  useRef,
-  useState,
-  useCallback,
-} from 'react';
+import React, { InputHTMLAttributes, useCallback } from 'react';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   mask: 'currency' | 'number';
@@ -23,16 +17,6 @@ const Input: React.FC<InputProps> = ({
   const VALID_FIRST = /^[1-9]{1}$/;
   const VALID_NEXT = /^[0-9]{1}$/;
   const DELETE_KEY_CODE = 8;
-
-  const valueAbsTrunc = Math.trunc(Math.abs(value));
-
-  if (
-    value !== valueAbsTrunc ||
-    !Number.isFinite(value) ||
-    Number.isNaN(value)
-  ) {
-    console.log(`invalid value property`);
-  }
 
   const handleInputKeyDown = useCallback(
     e => {
@@ -58,7 +42,7 @@ const Input: React.FC<InputProps> = ({
       }
       onValueChange(nextValue);
     },
-    [max, onValueChange, value],
+    [max, onValueChange, value, VALID_FIRST, VALID_NEXT],
   );
 
   const handleInputChange = useCallback(() => {

@@ -59,6 +59,9 @@ const Import: React.FC = () => {
   const [profit, setProfit] = useState(0);
   const [wallet, setWallet] = useState(0);
   const [ticker, setTicker] = useState('');
+  const [cotation, setCotation] = useState(0);
+  const [totalQuantity, setTotalQuantity] = useState(0);
+  const [currentProfit, setCurrentProfit] = useState(0);
 
   const { params } = useRouteMatch<StatementActiveParams>();
   const { asset_id } = params;
@@ -81,6 +84,9 @@ const Import: React.FC = () => {
         setWallet(response.data.asset.wallet);
         setProfit(response.data.asset.profit);
         setTicker(response.data.asset.ticker);
+        setCotation(response.data.asset.cotation);
+        setTotalQuantity(response.data.asset.total_quantity);
+        setCurrentProfit(response.data.asset.current_profit);
       } catch (err) {
         addToast({
           type: 'error',
@@ -96,8 +102,6 @@ const Import: React.FC = () => {
 
   const handleDelete = useCallback(
     async (id: string): Promise<void> => {
-      console.log({ id, asset_id });
-
       try {
         await api.delete(`/transactions/delete/${id}`, {
           headers: {
@@ -169,27 +173,35 @@ const Import: React.FC = () => {
               <p>{`Carteira - ${ticker}`}</p>
               <img src={total} alt="Total" />
             </header>
-            <h1 data-testid="balance-total">
-              {formatCurrency(Number(wallet))}
-            </h1>
+            <h2 data-testid="quantity-total">{`Quantidade: ${totalQuantity}`}</h2>
+            <h2 data-testid="balance-total">
+              {`Valor: ${formatCurrency(wallet)}`}
+            </h2>
           </Card>
 
           <Card>
             <header>
-              <p>{`Lucro da Carteira ${ticker}`}</p>
-              {Number(profit) >= 0 ? (
+              <strong>{`Resultado - ${ticker}`}</strong>
+              {profit + currentProfit >= 0 ? (
                 <img src={income} alt="Income" />
               ) : (
                 <img src={outcome} alt="Outcome" />
               )}
             </header>
-            <h1 data-testid="balance-outcome">
-              {formatCurrency(Number(profit))}
-            </h1>
+            <p data-testid="balance-outcome">
+              {`Tradings realizados: ${formatCurrency(profit)}`}
+            </p>
+            <p>{`Carteira atual: ${formatCurrency(currentProfit)}`}</p>
+            <br />
+            <p>{`Total atual: ${formatCurrency(profit + currentProfit)}`}</p>
           </Card>
         </CardContainer>
         <TableContainer>
-          <h1>{`Extrato - ${ticker}`}</h1>
+          <h1>
+            {`Extrato - ${ticker} - ${formatCurrency(
+              cotation,
+            )} (último fechamento)`}
+          </h1>
           {!hasStatement ? (
             <p>{`Você não possui mais nenhum transação de ${ticker}`}</p>
           ) : (

@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { FiX } from 'react-icons/fi';
 
-import { Link, NavLink, useHistory } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 
 import { useAuth } from '../../hooks/auth';
 
@@ -21,7 +21,7 @@ const Header: React.FC<HeaderProps> = ({
 
   const handleLogout = useCallback(() => {
     signOut();
-  }, []);
+  }, [signOut]);
 
   return (
     <Container size={size}>
@@ -39,8 +39,7 @@ const Header: React.FC<HeaderProps> = ({
                 onClick={() =>
                   redirect === 'statement'
                     ? history.goBack()
-                    : history.push('/')
-                }
+                    : history.push('/')}
               >
                 <FiX size={40} color="#fff" />
               </button>

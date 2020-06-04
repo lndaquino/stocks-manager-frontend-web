@@ -1,6 +1,6 @@
 import React, { useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { FiLogIn, FiKey, FiMail, FiLock } from 'react-icons/fi';
+import { FiLogIn, FiKey, FiMail } from 'react-icons/fi';
 
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
@@ -36,9 +36,6 @@ const SignIn: React.FC = () => {
 
   const handleSubmit = useCallback(
     async (data: SignInFormData) => {
-      console.log('handleSubmit');
-      console.log(data);
-
       try {
         formRef.current?.setErrors({});
 
@@ -105,7 +102,7 @@ const SignIn: React.FC = () => {
         });
       }
     }
-  }, []);
+  }, [addToast]);
 
   return (
     <Container>

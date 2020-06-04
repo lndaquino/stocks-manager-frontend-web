@@ -7,8 +7,6 @@ import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 
 import Header from '../../components/Header';
-import FileList from '../../components/FileList';
-import Upload from '../../components/Upload';
 
 import Input from '../../components/IconedInput';
 
@@ -33,37 +31,38 @@ const ResetPassword: React.FC = () => {
 
   const { params } = useRouteMatch<ResetPasswordParams>();
   const { token } = params;
-  console.log({ token });
 
-  const handleSubmit = useCallback(async ({ password }: ProfileFormData) => {
-    console.log('handleSubmit');
-    try {
-      formRef.current?.setErrors({});
+  const handleSubmit = useCallback(
+    async ({ password }: ProfileFormData) => {
+      try {
+        formRef.current?.setErrors({});
 
-      const schema = Yup.object().shape({
-        password: Yup.string().min(6, 'No mínimo 6 dígitos'),
-      });
+        const schema = Yup.object().shape({
+          password: Yup.string().min(6, 'No mínimo 6 dígitos'),
+        });
 
-      await schema.validate({ password }, { abortEarly: false });
+        await schema.validate({ password }, { abortEarly: false });
 
-      await api.post('/password/reset', { password, token });
+        await api.post('/password/reset', { password, token });
 
-      history.push('/');
+        history.push('/');
 
-      addToast({
-        type: 'sucess',
-        title: 'Senha resetada com sucesso',
-        description:
-          'Você já pode fazer seu login no StocksLife com sua nova senha!',
-      });
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const errors = getValidationErrors(err);
+        addToast({
+          type: 'sucess',
+          title: 'Senha resetada com sucesso',
+          description:
+            'Você já pode fazer seu login no StocksLife com sua nova senha!',
+        });
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
 
-        formRef.current?.setErrors(errors);
+          formRef.current?.setErrors(errors);
+        }
       }
-    }
-  }, []);
+    },
+    [addToast, history, token],
+  );
 
   return (
     <>
